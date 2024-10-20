@@ -1,0 +1,27 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
+
+# Load and handle missing values
+df = pd.read_csv("diabetes.csv")
+df["Glucose"].replace(0, df["Glucose"].mean(), inplace=True)
+df["BloodPressure"].replace(0, df["BloodPressure"].mean(), inplace=True)
+df["SkinThickness"].replace(0, df["SkinThickness"].mean(), inplace=True)
+df["Insulin"].replace(0, df["Insulin"].mean(), inplace=True)
+df["BMI"].replace(0, df["BMI"].mean(), inplace=True)
+
+# Split dataset into training and testing
+X = df.iloc[:, :8]
+Y = df.iloc[:, 8:]
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.46, random_state=46)
+
+# K-Nearest Neighbors (KNN) Model
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, Y_train)
+
+# Evaluate the model
+print("Training score:", knn.score(X_train, Y_train))
+print("Testing score:", knn.score(X_test, Y_test))
+print("Confusion Matrix:\n", confusion_matrix(Y_test, knn.predict(X_test)))
+print("Classification Report:\n", classification_report(Y_test, knn.predict(X_test)))
