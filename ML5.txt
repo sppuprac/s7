@@ -1,0 +1,41 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, classification_report
+
+# Load dataset
+df = pd.read_csv('/content/drive/MyDrive/Ml Lab/emails.csv')
+
+# Drop unnecessary columns
+X = df.drop(["Email No.", "Prediction"], axis=1)
+Y = df["Prediction"]
+
+# Visualize class distribution
+sns.countplot(x=Y)
+plt.show()
+
+# Scale the data
+scaler = MinMaxScaler()
+X_Scale = scaler.fit_transform(X)
+
+# Split the data into training and testing sets
+X_train, X_test, Y_train, Y_Test = train_test_split(X_Scale, Y, test_size=0.46, random_state=46)
+
+# Train the KNN classifier
+knn = KNeighborsClassifier()
+knn.fit(X_train, Y_train)
+
+# Make predictions
+Y_pred = knn.predict(X_test)
+
+# Evaluate the model
+ConfusionMatrixDisplay.from_predictions(Y_Test, Y_pred)
+plt.show()
+
+# Print accuracy and classification report
+print(f"Accuracy: {accuracy_score(Y_Test, Y_pred)}")
+print(classification_report(Y_Test, Y_pred))
